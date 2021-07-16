@@ -40,4 +40,4 @@ df_iemocap['dom'] = doms
 
 df_iemocap.tail()
 
-df_iemocap.to_csv('/home/b_ramatejasri258/SPEECH2EMOTION/data/df_iemocap.csv', index=False)
+df_iemocap.to_csv('data/pre-processed/df_iemocap.csv', index=False)

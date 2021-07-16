@@ -9,13 +9,10 @@ df = df[df['label'].isin([0, 1, 2, 3, 4, 5, 6, 7])]
 print(df.shape)
 display(df.head())
 
-# change 7 to 2
 df['label'] = df['label'].map({0: 0, 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 4, 7: 5})
 df.head()
 
-# df.to_csv('data/pre-processed/no_sample_df.csv')
 
-# oversample fear
 fear_df = df[df['label']==3]
 for i in range(30):
     df = df.append(fear_df)
@@ -24,8 +21,6 @@ sur_df = df[df['label']==4]
 for i in range(10):
     df = df.append(sur_df)
     
-# df.to_csv('data/pre-processed/modified_df.csv')
-
 
 scalar = MinMaxScaler()
 df[df.columns[2:]] = scalar.fit_transform(df[df.columns[2:]])

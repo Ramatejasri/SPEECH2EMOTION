@@ -29,17 +29,19 @@ emotion_dict = {'ang': 0,
                 'xxx': 8,
                 'oth': 8}
 
-data_dir = '/home/b_ramatejasri258/SPEECH2EMOTION/data/'
-path = '/home/b_ramatejasri258/SPEECH2EMOTION/data/pre-processed/'
+
+data_dir = 'data/pre-processed/'
 labels_path = '{}df_iemocap.csv'.format(data_dir)
-audio_vectors_path = '{}audio_vectors_mfcc_20_'.format(path)
+audio_vectors_path = '{}audio_vectors_'.format(data_dir)
 
 labels_df = pd.read_csv(labels_path)
 
 columns = ['wav_file', 'label', 'voiced']
+columns1 = ['wav_file', 'label', 'val']
+
 # columns.extend(['feat_'+str(i) for i in range(20)])
 df_features = pd.DataFrame(columns=columns)
-
+df_features1 = pd.DataFrame(columns=columns1)
 
 for sess in (range(1, 2)):
         audio_vectors = pickle.load(open('{}{}.pkl'.format(audio_vectors_path, sess), 'rb'))
@@ -49,16 +51,24 @@ for sess in (range(1, 2)):
                 label = emotion_dict[row['emotion']]
                 y = audio_vectors[wav_file_name]
                 feat = [wav_file_name, label]
-                # zcr = librosa.feature.zero_crossing_rate(y=y)
-                # feat.extend(short_time_energy_and_zero_cross_rate(y))
+                feat1 = [wav_file_name,label]
+                if row['val']>2.5:
+                    feat1.extend(['pos'])
+                elif row['val']<2.5:
+                    feat1.extend(['neg'])
+                else:
+                    feat1.extend(['neu'])
+                
                 f0, voiced_flag, voiced_probs = librosa.pyin(y, fmin=librosa.note_to_hz('C2'), fmax=librosa.note_to_hz('C7'))
-                print('voiced_flag', voiced_flag)
+                # print('voiced_flag', voiced_flag)
                 feat.extend(voiced_flag)
+                # print('feat1',feat1)
                 
                 df_features = df_features.append(pd.DataFrame(feat, index=columns).transpose(), ignore_index=True)
+                df_features1 = df_features1.append(pd.DataFrame(feat1, index=columns1).transpose(), ignore_index=True)
 
             except:
                 traceback.print_exc()
-                print('Some exception occured')
 
-df_features.to_csv('/home/b_ramatejasri258/SPEECH2EMOTION/data/pre-processed/audio_voiced_feats_librosa.csv', index=False)
+df_features.to_csv('data/pre-processed/voiced_cls.csv', index=False)
+df_features1.to_csv('data/pre-processed/val_cls.csv', index=False)

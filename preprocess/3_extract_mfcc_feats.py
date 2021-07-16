@@ -13,8 +13,7 @@ import pandas as pd
 import IPython.display
 import librosa.display
 import traceback
-ms.use('seaborn-muted')
-# %matplotlib inline
+
 
 emotion_dict = {'ang': 0,
                 'hap': 1,
@@ -34,7 +33,7 @@ audio_vectors_path = '{}audio_vectors_'.format(data_dir)
 labels_df = pd.read_csv(labels_path)
 
 columns = ['wav_file', 'label']
-columns.extend(['feat_'+str(i) for i in range(10)])
+columns.extend(['feat_'+str(i) for i in range(20)])
 df_features = pd.DataFrame(columns=columns)
 
 for sess in (range(1, 2)):
@@ -47,9 +46,7 @@ for sess in (range(1, 2)):
                 feat = [wav_file_name, label]
                 feat.extend(y)
                 df_features = df_features.append(pd.DataFrame(feat, index=columns).transpose(), ignore_index=True)
-
             except:
                 traceback.print_exc()
-                print('Some exception occured')
 
 df_features.to_csv('data/pre-processed/audio_features.csv', index=False)

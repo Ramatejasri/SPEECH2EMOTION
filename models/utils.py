@@ -3,7 +3,7 @@ import torch
 import numpy as np
 import pandas as pd
 sys.path.append('../')
-from config import model_config as config
+from models.config import model_config as config
 
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score, precision_score, recall_score
 
@@ -12,14 +12,14 @@ from collections import Counter
 import matplotlib.pyplot as plt
 
 
-def load_data(batched=True, test=False, file_dir='/home/b_ramatejasri258/project/MFCC/data/s2e/'):
-    df = pd.read_csv('/home/b_ramatejasri258/project/voiced/data/pre-processed/audio_voiced_feats_librosa.csv')
+def load_data(batched=True, test=False, file_dir='../preprocess/data/s2e/', model_type='full'):
+    df = pd.read_csv('../preprocess/data/pre-processed/voiced_cls.csv')
     voiced = list(df.loc[df['voiced'] == True, 'wav_file'])
     unvoiced = list(df.loc[df['voiced'] == False, 'wav_file'])
 
-    df_val = pd.read_csv('/home/b_ramatejasri258/multimodal-speech-emotion-recognition/data/pre-processed/voice_unvoiced_based_on_val.csv')
-    pos_val = list(df_val.loc[df_val['label'] == True, 'wav_file'])
-    neg_val = list(df_val.loc[df_val['label'] == False, 'wav_file'])
+    df_val = pd.read_csv('../preprocess/data/pre-processed/val_cls.csv')
+    pos_val = list(df_val.loc[df_val['val'] == 'pos', 'wav_file'])
+    neg_val = list(df_val.loc[df_val['val'] == 'neg', 'wav_file'])
     print(len(voiced),len(unvoiced), len(pos_val), len(neg_val))
 
 
@@ -35,12 +35,32 @@ def load_data(batched=True, test=False, file_dir='/home/b_ramatejasri258/project
         new_data = []
         new_labels = []
         for d in data[0]:
-            if d[0] in unvoiced and d[0] in neg_val:
+            if model_type == 'full':
                 new_data.append(d[2:])
                 new_labels.append(d[1])
-            if d[0] in voiced and d[0] in pos_val:
-                new_data.append(d[2:])
-                new_labels.append(d[1])
+            elif model_type == 'val_based':
+                if d[0] in unvoiced and d[0] in neg_val:
+                    new_data.append(d[2:])
+                    new_labels.append(d[1])
+                if d[0] in voiced and d[0] in pos_val:
+                    new_data.append(d[2:])
+                    new_labels.append(d[1])
+            elif model_type == 'voiced':
+                if d[0] in voiced:
+                    new_data.append(d[2:])
+                    new_labels.append(d[1])
+            elif model_type == 'unvoiced':
+                if d[0] in unvoiced:
+                    new_data.append(d[2:])
+                    new_labels.append(d[1])
+            elif model_type == 'neg_val_unvoiced':
+                if d[0] in unvoiced and d[0] in neg_val:
+                    new_data.append(d[2:])
+                    new_labels.append(d[1])
+            elif model_type == 'pos_val_voiced':
+                if d[0] in voiced and d[0] in pos_val:
+                    new_data.append(d[2:])
+                    new_labels.append(d[1])
             new_data.append(d[2:])
             new_labels.append(d[1])
         print('test:',Counter(new_labels))
