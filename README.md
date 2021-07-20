@@ -1,6 +1,6 @@
 # SPEECH2EMOTION
 # Data Preprocessing
-***Run these files Sequntially
+***Run these files Sequntially                                              
 cd SPEECH2EMOTION/preprocess
 preprocess/1_extract_emotion_labels.py  
       preprocess/2_build_audio_vectors.py  
