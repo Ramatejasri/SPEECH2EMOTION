@@ -9,5 +9,6 @@ model_config = {
     'batch_size': 64,  # carefully chosen
     'n_epochs':5,
     'n_layers': 2,
-    'model_code': 'basic_lstm'
+    'model_code': 'basic_lstm',
+    'data_type': 'full'
 }

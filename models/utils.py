@@ -12,7 +12,7 @@ from collections import Counter
 import matplotlib.pyplot as plt
 
 
-def load_data(batched=True, test=False, file_dir='../preprocess/data/s2e/', model_type='full'):
+def load_data(batched=True, test=False, file_dir='../preprocess/data/s2e/', data_type='full'):
     df = pd.read_csv('../preprocess/data/pre-processed/voiced_cls.csv')
     voiced = list(df.loc[df['voiced'] == True, 'wav_file'])
     unvoiced = list(df.loc[df['voiced'] == False, 'wav_file'])
@@ -30,39 +30,39 @@ def load_data(batched=True, test=False, file_dir='../preprocess/data/s2e/', mode
     
     # 0th index in label, rest all are features
     data = (np.array(df[df.columns[:]]), np.array(df[df.columns[0]]))
-    
+    data_type = config['data_type']
     if test or not batched:
         new_data = []
         new_labels = []
         for d in data[0]:
-            if model_type == 'full':
+            if data_type == 'full':
                 new_data.append(d[2:])
                 new_labels.append(d[1])
-            elif model_type == 'val_based':
+            elif data_type == 'val_based':
                 if d[0] in unvoiced and d[0] in neg_val:
                     new_data.append(d[2:])
                     new_labels.append(d[1])
                 if d[0] in voiced and d[0] in pos_val:
                     new_data.append(d[2:])
                     new_labels.append(d[1])
-            elif model_type == 'voiced':
+            elif data_type == 'voiced':
                 if d[0] in voiced:
                     new_data.append(d[2:])
                     new_labels.append(d[1])
-            elif model_type == 'unvoiced':
+            elif data_type == 'unvoiced':
                 if d[0] in unvoiced:
                     new_data.append(d[2:])
                     new_labels.append(d[1])
-            elif model_type == 'neg_val_unvoiced':
+            elif data_type == 'neg_val_unvoiced':
                 if d[0] in unvoiced and d[0] in neg_val:
                     new_data.append(d[2:])
                     new_labels.append(d[1])
-            elif model_type == 'pos_val_voiced':
+            elif data_type == 'pos_val_voiced':
                 if d[0] in voiced and d[0] in pos_val:
                     new_data.append(d[2:])
                     new_labels.append(d[1])
-            new_data.append(d[2:])
-            new_labels.append(d[1])
+            # new_data.append(d[2:])
+            # new_labels.append(d[1])
         print('test:',Counter(new_labels))
         # return [torch.FloatTensor(data[0]), torch.LongTensor(data[1])]
         return [torch.FloatTensor(new_data), torch.LongTensor(new_labels)]
@@ -81,15 +81,45 @@ def load_data(batched=True, test=False, file_dir='../preprocess/data/s2e/', mode
             # input_batch.append(e[0][2:])
             # output_batch.append(e[0][1])
             # c_l.append(e[0][1])
-            if e[0][0] in unvoiced and e[0][0] in neg_val:
-                input_batch.append(e[0][2:])
-                output_batch.append(e[0][1])
-                c_l.append(e[0][1])
-            if e[0][0] in voiced and e[0][0] in pos_val:
-                input_batch.append(e[0][2:])
-                output_batch.append(e[0][1])
-                c_l.append(e[0][1])
-
+            if data_type=='full':
+                if e[0][0] in unvoiced and e[0][0] in neg_val:
+                    input_batch.append(e[0][2:])
+                    output_batch.append(e[0][1])
+                    c_l.append(e[0][1])
+                if e[0][0] in voiced and e[0][0] in pos_val:
+                    input_batch.append(e[0][2:])
+                    output_batch.append(e[0][1])
+                    c_l.append(e[0][1])
+            if data_type=='val_based':
+                if e[0][0] in unvoiced and e[0][0] in neg_val:
+                    input_batch.append(e[0][2:])
+                    output_batch.append(e[0][1])
+                    c_l.append(e[0][1])
+                if e[0][0] in voiced and e[0][0] in pos_val:
+                    input_batch.append(e[0][2:])
+                    output_batch.append(e[0][1])
+                    c_l.append(e[0][1])
+            if data_type=='voiced':
+                if e[0][0] in voiced:
+                    input_batch.append(e[0][2:])
+                    output_batch.append(e[0][1])
+                    c_l.append(e[0][1])
+            if data_type=='unvoiced':
+                if e[0][0] in unvoiced:
+                    input_batch.append(e[0][2:])
+                    output_batch.append(e[0][1])
+                    c_l.append(e[0][1])
+            if data_type=='neg_val_unvoiced':
+                if e[0][0] in unvoiced and e[0][0] in neg_val:
+                    input_batch.append(e[0][2:])
+                    output_batch.append(e[0][1])
+                    c_l.append(e[0][1])
+            if data_type=='pos_val_voiced':
+                if e[0][0] in voiced and e[0][0] in pos_val:
+                    input_batch.append(e[0][2:])
+                    output_batch.append(e[0][1])
+                    c_l.append(e[0][1])
+            
         print(len(input_batch))
         print(len(output_batch))
         batches.append([torch.FloatTensor(input_batch),
