@@ -12,7 +12,7 @@ preprocess/1_extract_emotion_labels.py
       step2:
       cd SPEECH2EMOTION/models                                                  
       Model Training                                                                    
-      Run models/lstm_classifier.py
+      Run models/lstm_classifier.py                                                                            
       step3:                                    
       Predictions on test data and performance metrics                                    
       Run models/predict.py***
