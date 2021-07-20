@@ -1,6 +1,6 @@
 # SPEECH2EMOTION
 # Data Preprocessing
-***   Run these files Sequntially
+***Run these files Sequntially
       cd SPEECH2EMOTION/preprocess
       preprocess/1_extract_emotion_labels.py  
       preprocess/2_build_audio_vectors.py  
@@ -10,5 +10,5 @@
       Model Training
       Run models/lstm_classifier.py
       Predictions on test data and performance metrics
-      Run models/predict.py ***
+      Run models/predict.py***
 
